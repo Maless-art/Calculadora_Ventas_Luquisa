@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Gallo Más Gallo – Ventas</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#d61f2c">
+
+<style>
+  :root{
+    --bg:#ffffff;
+    --ink:#111827;
+    --muted:#6b7280;
+    --stroke:#e5e7eb;
+
+    --red:#d61f2c;
+    --yellow:#f4b400;
+    --green:#1fb36a;
+
+    --card:#ffffff;
+    --shadow: 0 16px 50px rgba(0,0,0,.10);
+    --r:16px;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+    /* GALLO */
+    --gallo-wm: url("gallos.png");
+    --gallo-opacity: .25;
+    --gallo-size: 800px;
+    --gallo-card-opacity: .12;
+  }
+
+  *{box-sizing:border-box}
+
+  body{
+    margin:0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    background:
+      radial-gradient(900px 420px at 10% 0%, rgba(214,31,44,.10), transparent 60%),
+      radial-gradient(900px 420px at 90% 0%, rgba(244,180,0,.10), transparent 60%),
+      #fff;
+    color:var(--ink);
+  }
+
+ 
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    background-image: var(--gallo-wm);
+    background-repeat:no-repeat;
+    background-position:center 180px;
+    background-size: var(--gallo-size);
+    opacity: var(--gallo-opacity);
+ 
+  }
+  body > *{ position:relative; z-index:1; }
+
+  .wrap{max-width:850px;margin:24px auto;padding:0 16px 40px;}
+
+  .top{
+    display:flex;
+    gap:14px;
+    align-items:flex-end;
+    justify-content:flex-start;
+    flex-wrap:wrap;
+    margin-bottom:14px;
+  }
+
+  .brand{display:flex;align-items:center;gap:12px;}
+  .badge{
+  width:48px;
+  height:48px;
+  border-radius:14px;
+  background: linear-gradient(135deg, var(--red), var(--yellow));
+  box-shadow: 0 10px 25px rgba(214,31,44,.22);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.badge img{
+  width:48px;
+  height:48px;
+  object-fit:contain;
+}
+
+  h1{font-size:18px;margin:0;letter-spacing:.2px}
+  .sub{margin:2px 0 0;color:var(--muted);font-size:12px}
+
+  .actions{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+    margin-left:auto;
+  }
+
+  .btn{
+    border:1px solid var(--stroke);
+    background:#fff;
+    color:var(--ink);
+    padding:10px 12px;
+    border-radius:14px;
+    cursor:pointer;
+    box-shadow: 0 10px 25px rgba(0,0,0,.06);
+    font-weight:650;
+  }
+  .btn.primary{
+    border:none;
+    background: linear-gradient(135deg, var(--red), var(--yellow));
+    color:#fff;
+  }
+  .btn:active{transform:translateY(1px)}
+
+  .date{
+    display:flex; gap:10px; align-items:center;
+    padding:10px 12px; border:1px solid var(--stroke); border-radius:14px;
+    background:#fff; box-shadow: 0 10px 25px rgba(0,0,0,.06);
+  }
+  .date label{font-size:12px;color:var(--muted)}
+  .date input{border:none; outline:none; font-weight:700; font-family:var(--mono);}
+
+
+  .card{
+    position:relative;
+    background:var(--card);
+    border:1px solid var(--stroke);
+    border-radius:var(--r);
+    box-shadow: var(--shadow);
+    overflow:hidden;
+
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  
+  .card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+    background: var(--gallo-wm) center / 900px no-repeat;
+    opacity: var(--gallo-card-opacity);
+    
+  }
+  .card > *{ position:relative; z-index:1; }
+
+  .scroll{
+    overflow:auto;   
+    max-width:100%;
+  }
+
+  .table{
+    border-collapse:collapse;
+    table-layout:fixed; 
+    width:auto;     
+  }
+
+  thead th{
+    text-align:left;
+    font-size:12px;
+    color:var(--muted);
+    padding:7px 12px;
+    border-bottom:1px solid var(--stroke);
+    background: linear-gradient(90deg, rgba(214,31,44,.06), rgba(244,180,0,.06), rgba(31,179,106,.06));
+  }
+
+  tbody td{
+    padding:10px 12px;
+    border-bottom:1px solid #f1f5f9;
+    vertical-align:middle;
+    font-size:13px;
+  }
+
+  .num{
+    font-family:var(--mono);
+    text-align:right;
+    white-space:nowrap;
+  }
+
+  .in{
+    width:100%;
+    border:1px solid var(--stroke);
+    border-radius:12px;
+    padding:9px 10px;
+    outline:none;
+    font-weight:650;
+    background:#fff;
+  }
+  .in[data-k="name"]{ font-size:10px; letter-spacing:.2px; }
+
+  .in:focus{
+    border-color: rgba(214,31,44,.35);
+    box-shadow: 0 0 0 4px rgba(214,31,44,.10);
+  }
+
+  .rowActions{display:flex; gap:8px; justify-content:flex-end;}
+  .mini{
+    border:none;
+    background: rgba(214,31,44,.10);
+    color: var(--red);
+    padding:9px 12px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:800;
+  }
+  .mini:active{transform:translateY(1px)}
+
+  /* Barra */
+  .bar{
+    position:relative;
+    height:14px;
+    width:90%;
+    border-radius:999px;
+    background: linear-gradient(90deg, var(--red) 0%, var(--yellow) 50%, var(--green) 100%);
+    overflow:hidden;
+    border:1px solid rgba(17,24,39,.08);
+  }
+  .bar .mask{
+    position:absolute; top:0; right:0; bottom:0;
+    background: rgba(255,255,255,.72);
+    width:0%;
+  }
+  .bar .dot{
+    position:absolute; top:50%;
+    transform:translate(-50%,-50%);
+    width:14px;height:14px;border-radius:50%;
+    background:#fff;
+    border:2px solid rgba(17,24,39,.18);
+    box-shadow: 0 6px 14px rgba(0,0,0,.12);
+    left:0%;
+  }
+
+  .pct{
+    font-family:var(--mono);
+    font-weight:900;
+    text-align:right;
+    width:86px;
+  }
+
+  .tag{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    margin-left:8px;
+    padding:2px 8px;
+    border-radius:999px;
+    border:1px solid rgba(17,24,39,.10);
+    font-family:var(--mono);
+    font-size:11px;
+    font-weight:900;
+    opacity:.45;
+    letter-spacing:.6px;
+    user-select:none;
+  }
+
+  tr.top1 td{background: rgba(244,180,0,.16);}
+  tr.top2 td{background: rgba(244,180,0,.11);}
+  tr.top3 td{background: rgba(244,180,0,.07);}
+  tr.top1 td:first-child,
+  tr.top2 td:first-child,
+  tr.top3 td:first-child{
+    border-left: 6px solid rgba(214,31,44,.55);
+  }
+
+  .footer{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:12px;
+    padding:14px;
+    background:#fff;
+  }
+  .tot{
+    border:1px solid var(--stroke);
+    border-radius:14px;
+    padding:12px 12px;
+    background: radial-gradient(600px 120px at 20% 0%, rgba(214,31,44,.08), transparent 60%), #fff;
+  }
+  .tot h3{margin:0 0 8px;font-size:12px;color:var(--muted);letter-spacing:.3px}
+  .tot .line{
+    display:flex;justify-content:space-between;align-items:baseline;
+    gap:10px;padding:6px 0;border-top:1px dashed #e5e7eb;
+  }
+  .tot .line:first-of-type{border-top:none}
+  .money{font-family:var(--mono);font-weight:900}
+  .accent{color:var(--red)}
+  .note{font-size:12px;color:var(--muted);margin-top:8px}
+
+  @media (max-width: 900px){
+    .footer{grid-template-columns:1fr}
+    .card{ width:100%; } /* en móvil, que use todo el ancho y scrollee */
+    .table{ width:100%; } /* y que no se corte raro */
+  }
+</style>
+
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="badge">
+  <img src="gallo-icon.png" alt="Gallo" />
+</div>
+
+        <div>
+          <h1>EL GALLO MÁS GALLO · Luquisa</h1>
+          <div class="sub">AppWeb para cálculo de cuota de ventas ·  v1.0.0</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <div class="date">
+          <label for="reportDate">Fecha</label>
+          <input id="reportDate" type="date" />
+        </div>
+        <button class="btn primary" id="addRow">+ Agregar vendedor</button>
+        <button class="btn" id="reset">Reset</button>
+        
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="scroll">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width:30px">#</th>
+             <th style="width:240px">Vendedor</th>
+              <th class="num" style="width:120px">Cuota</th>
+              <th class="num" style="width:120px">Venta</th>
+              <th class="num" style="width:80px">% Real</th>
+              <th style="width:140px">Progreso</th>
+              <th style="width:120px"></th>
+
+
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+
+      <div class="footer">
+        <div class="tot">
+          <h3>TOTAL PANAMÁ</h3>
+          <div class="line"><div>Cuota</div><div class="money" id="totCuotaPanama">B/. 0.00</div></div>
+          <div class="line"><div>Venta</div><div class="money accent" id="totVentaPanama">B/. 0.00</div></div>
+          <div class="line"><div>% Real</div><div class="money" id="totPctPanama">0.00%</div></div>
+          <div class="note">Panamá: Juan Valdez, José Velázquez, Francisco Beitía, Máximo Gallardo, Héctor Vega, Luis Carlos, Antonio Marmolejo, Uvaldino Serracín.</div>
+        </div>
+
+        <div class="tot">
+          <h3>TOTAL CHITRÉ</h3>
+          <div class="line"><div>Cuota</div><div class="money" id="totCuotaChitre">B/. 0.00</div></div>
+          <div class="line"><div>Venta</div><div class="money accent" id="totVentaChitre">B/. 0.00</div></div>
+          <div class="line"><div>% Real</div><div class="money" id="totPctChitre">0.00%</div></div>
+          <div class="note">Chitré: Eduardo Domínguez, Abdiel Jované, Abraham Tello.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ========= Utilidades ========= */
+const $ = (s, el=document) => el.querySelector(s);
+const fmtMoney = (n) => {
+  const v = isFinite(n) ? n : 0;
+  return "B/. " + v.toLocaleString("es-PA", {minimumFractionDigits:2, maximumFractionDigits:2});
+};
+const fmtPct = (n) => {
+  const v = isFinite(n) ? n : 0;
+  return v.toLocaleString("es-PA", {minimumFractionDigits:2, maximumFractionDigits:2}) + "%";
+};
+const toNum = (val) => {
+  if (typeof val !== "string") return Number(val)||0;
+  const clean = val
+    .replace(/[^\d.,-]/g, "")
+    .replace(/\.(?=\d{3}(\D|$))/g, "")
+    .replace(/,(?=\d{3}(\D|$))/g, "");
+  const normalized = clean.includes(",") && !clean.includes(".")
+    ? clean.replace(",", ".")
+    : clean;
+  const n = Number(normalized);
+  return isFinite(n) ? n : 0;
+};
+const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+
+/* ========= Grupo fijo (CHITRÉ) ========= */
+const CHITRE_SET = new Set([
+  "EDUARDO DOMINGUEZ",
+  "ABDIEL JOVANE",
+  "ABRAHAM TELLO"
+]);
+
+function normalizeName(s){
+  return String(s||"")
+    .trim()
+    .toUpperCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,""); // quita tildes
+}
+function groupTag(name){
+  return CHITRE_SET.has(normalizeName(name)) ? "CH" : "PA";
+}
+
+/* ========= Storage ========= */
+const KEY = "gallo_ventas_v2";
+function loadState(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+function saveState(state){
+  localStorage.setItem(KEY, JSON.stringify(state));
+}
+
+/* ========= Data ========= */
+function defaultRows(){
+  return [
+    {name:"JUAN VALDEZ", cuota:80000, venta:14977.68},
+    {name:"JOSE VELASQUEZ", cuota:80000, venta:6103.00},
+    {name:"ABDIEL JOVANE", cuota:60000, venta:3313.43},
+    {name:"FRANCISCO BETIA", cuota:50000, venta:2436.47},
+    {name:"MAXIMO GALLARDO", cuota:80000, venta:3827.48},
+    {name:"HECTOR VEGA", cuota:100000, venta:2617.06},
+    {name:"LUIS CARLOS", cuota:85000, venta:2056.26},
+    {name:"EDUARDO DOMINGUEZ", cuota:80000, venta:1205.70},
+    {name:"ABRAHAM TELLO", cuota:45000, venta:481.05},
+    {name:"ANTONIO MARMOLEJO", cuota:120000, venta:402.00},
+    {name:"UDALVINO SERRACIN", cuota:120000, venta:68.00}
+  ];
+}
+
+
+const rowsEl = $("#rows");
+const dateEl = $("#reportDate");
+
+let state = loadState() || {
+  date: new Date().toISOString().slice(0,10),
+  rows: defaultRows()
+};
+
+dateEl.value = state.date || new Date().toISOString().slice(0,10);
+
+function render(){
+  rowsEl.innerHTML = "";
+
+  state.rows.forEach((r, idx) => {
+    const cuota = toNum(r.cuota);
+    const venta = toNum(r.venta);
+    const pct = cuota > 0 ? (venta / cuota) * 100 : 0;
+
+    const tag = groupTag(r.name);
+    const topClass = (idx===0) ? "top1" : (idx===1) ? "top2" : (idx===2) ? "top3" : "";
+
+    const tr = document.createElement("tr");
+    tr.dataset.i = idx;
+
+    if(topClass) tr.classList.add(topClass);
+
+    tr.innerHTML = `
+  <td class="num">${idx+1}</td>
+
+  <td>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <input class="in" data-k="name" data-i="${idx}"
+             value="${escapeHtml(r.name||"")}"
+             placeholder="Nombre del vendedor" />
+      <span class="tag" title="${tag === "CH" ? "Chitré" : "Panamá"}">${tag}</span>
+    </div>
+  </td>
+
+  <td class="num">
+    <input class="in num" data-k="cuota" data-i="${idx}" inputmode="decimal"
+           value="${fmtInputNumber(cuota)}" placeholder="0.00" />
+  </td>
+
+  <td class="num">
+    <input class="in num" data-k="venta" data-i="${idx}" inputmode="decimal"
+           value="${fmtInputNumber(venta)}" placeholder="0.00" />
+  </td>
+
+  <td class="pct" data-role="pct">${fmtPct(pct)}</td>
+
+  <td>
+    <div class="bar" data-role="bar" title="${fmtPct(pct)}">
+      <div class="dot" data-role="dot" style="left:${clamp(pct,0,100)}%"></div>
+      <div class="mask" data-role="mask" style="width:${100 - clamp(pct,0,100)}%"></div>
+    </div>
+  </td>
+
+  <td>
+    <div class="rowActions">
+      <button class="mini" data-act="del" data-i="${idx}">Eliminar</button>
+    </div>
+  </td>
+`;
+
+
+
+    rowsEl.appendChild(tr);
+  });
+
+  calcTotals();
+  saveState(state);
+}
+
+function calcTotals(){
+  const isChitre = (r) => groupTag(r.name) === "CH";
+
+  const panama = state.rows.filter(r => !isChitre(r));
+  const chitre = state.rows.filter(r => isChitre(r));
+
+  const sum = (arr, k) => arr.reduce((a,x) => a + toNum(x[k]), 0);
+
+  const cP = sum(panama, "cuota");
+  const vP = sum(panama, "venta");
+  const pP = cP>0 ? (vP/cP)*100 : 0;
+
+  const cC = sum(chitre, "cuota");
+  const vC = sum(chitre, "venta");
+  const pC = cC>0 ? (vC/cC)*100 : 0;
+
+  $("#totCuotaPanama").textContent = fmtMoney(cP);
+  $("#totVentaPanama").textContent = fmtMoney(vP);
+  $("#totPctPanama").textContent = fmtPct(pP);
+
+  $("#totCuotaChitre").textContent = fmtMoney(cC);
+  $("#totVentaChitre").textContent = fmtMoney(vC);
+  $("#totPctChitre").textContent = fmtPct(pC);
+}
+function rowPct(r){
+  const cuota = toNum(r.cuota);
+  const venta = toNum(r.venta);
+  return cuota > 0 ? (venta / cuota) * 100 : 0;
+}
+
+function sortRowsByPct(){
+  const pct = (r) => {
+    const c = toNum(r.cuota);
+    const v = toNum(r.venta);
+    return c > 0 ? (v / c) : 0;   // OJO: aquí NO *100, para ordenar da igual
+  };
+
+  state.rows.sort((a, b) => {
+    const db = pct(b) - pct(a);   // DESC: mayor % arriba
+    if(db !== 0) return db;
+
+    // desempate: mayor venta arriba
+    const dv = toNum(b.venta) - toNum(a.venta);
+    if(dv !== 0) return dv;
+
+    // último desempate: nombre
+    return normalizeName(a.name).localeCompare(normalizeName(b.name));
+  });
+}
+
+
+function updateRowUI(tr, row){
+  const cuota = toNum(row.cuota);
+  const venta = toNum(row.venta);
+  const pct = cuota > 0 ? (venta/cuota)*100 : 0;
+
+  const pctEl  = tr.querySelector('[data-role="pct"]');
+  const barEl  = tr.querySelector('[data-role="bar"]');
+  const dotEl  = tr.querySelector('[data-role="dot"]');
+  const maskEl = tr.querySelector('[data-role="mask"]');
+
+  if(pctEl) pctEl.textContent = fmtPct(pct);
+  if(barEl) barEl.title = fmtPct(pct);
+  if(dotEl) dotEl.style.left = `${clamp(pct,0,100)}%`;
+  if(maskEl) maskEl.style.width = `${100 - clamp(pct,0,100)}%`;
+}
+
+/* ========= Events ========= */
+dateEl.addEventListener("input", () => {
+  state.date = dateEl.value;
+  saveState(state);
+});
+
+rowsEl.addEventListener("input", (e) => {
+  const t = e.target;
+  if(!t.matches("[data-k]")) return;
+
+  const tr = t.closest("tr");
+  if(!tr) return;
+
+  const i = Number(tr.dataset.i);
+  const k = t.dataset.k;
+
+
+  state.rows[i][k] = t.value;
+updateRowUI(tr, state.rows[i]);
+    calcTotals();
+  saveState(state);
+});
+rowsEl.addEventListener("focusout", (e) => {
+  const t = e.target;
+  if(!t.matches('[data-k="cuota"], [data-k="venta"]')) return;
+
+  const tr = t.closest("tr");
+  if(!tr) return;
+
+  const i = Number(tr.dataset.i);
+  const k = t.dataset.k;
+
+  const n = toNum(t.value);
+  state.rows[i][k] = n;
+  t.value = fmtInputNumber(n);
+
+   sortRowsByPct();
+  render();
+  return;
+}, true);
+
+rowsEl.addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-act]");
+  if(!btn) return;
+
+  const act = btn.dataset.act;
+  const i = Number(btn.dataset.i);
+
+  if(act === "del"){
+    state.rows.splice(i,1);
+  }
+  render();
+});
+
+$("#addRow").addEventListener("click", () => {
+  state.rows.push({name:"", cuota:0, venta:0});
+  render();
+});
+
+$("#reset").addEventListener("click", () => {
+  state.rows = defaultRows();
+  state.date = new Date().toISOString().slice(0,10);
+  dateEl.value = state.date;
+  render();
+});
+
+
+/* ========= Helpers ========= */
+function fmtInputNumber(n){
+  const v = isFinite(n) ? n : 0;
+  return v.toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function escapeHtml(str){
+  return String(str)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+/* init */
+render();
+</script>
+</body>
+</html>
