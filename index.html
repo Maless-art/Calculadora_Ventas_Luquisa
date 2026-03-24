@@ -25,9 +25,9 @@
 
     /* GALLO */
     --gallo-wm: url("gallos.png");
-    --gallo-opacity: .25;
+    --gallo-opacity: .001;
     --gallo-size: 800px;
-    --gallo-card-opacity: .12;
+    --gallo-card-opacity: .01;
   }
 
   *{box-sizing:border-box}
@@ -58,7 +58,12 @@
   }
   body > *{ position:relative; z-index:1; }
 
-  .wrap{max-width:850px;margin:24px auto;padding:0 16px 40px;}
+
+
+/* CONTROL DE ANCHO DE INTERFAZ */
+
+
+  .wrap{max-width:900px;margin:24px auto;padding:0 16px 40px;}
 
   .top{
     display:flex;
@@ -124,18 +129,18 @@
   .date input{border:none; outline:none; font-weight:700; font-family:var(--mono);}
 
 
-  .card{
-    position:relative;
-    background:var(--card);
-    border:1px solid var(--stroke);
-    border-radius:var(--r);
-    box-shadow: var(--shadow);
-    overflow:hidden;
+ .card{
+  position:relative;
+  background:var(--card);
+  border:1px solid var(--stroke);
+  border-radius:var(--r);
+  box-shadow: var(--shadow);
+  overflow:hidden;
 
-    width: fit-content;
-    max-width: 100%;
-    margin: 0 auto;
-  }
+  width: auto;
+  max-width: 100%;
+  margin: 0 auto;
+}
 
   
   .card::before{
@@ -150,16 +155,17 @@
   }
   .card > *{ position:relative; z-index:1; }
 
-  .scroll{
-    overflow:auto;   
-    max-width:100%;
-  }
-
-  .table{
-    border-collapse:collapse;
-    table-layout:fixed; 
-    width:auto;     
-  }
+.scroll{
+  overflow-x:auto;
+  overflow-y:hidden;
+  width:100%;
+}
+ .table{
+  border-collapse:collapse;
+  table-layout:auto;
+  width:auto;
+  min-width:0;
+}
 
   thead th{
     text-align:left;
@@ -268,19 +274,21 @@
     border-left: 6px solid rgba(214,31,44,.55);
   }
 
-  .footer{
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-    gap:12px;
-    padding:14px;
-    background:#fff;
-  }
-  .tot{
-    border:1px solid var(--stroke);
-    border-radius:14px;
-    padding:12px 12px;
-    background: radial-gradient(600px 120px at 20% 0%, rgba(214,31,44,.08), transparent 60%), #fff;
-  }
+.footer{
+  display:flex;
+  gap:14px;
+  padding:14px;
+  background:#fff;
+}
+
+ .tot{
+  flex:1;
+  min-width:0;
+  border:1px solid var(--stroke);
+  border-radius:14px;
+  padding:12px 12px;
+  background: radial-gradient(600px 120px at 20% 0%, rgba(214,31,44,.08), transparent 60%), #fff;
+}
   .tot h3{margin:0 0 8px;font-size:12px;color:var(--muted);letter-spacing:.3px}
   .tot .line{
     display:flex;justify-content:space-between;align-items:baseline;
@@ -288,7 +296,7 @@
   }
   .tot .line:first-of-type{border-top:none}
   .money{font-family:var(--mono);font-weight:900}
-  .accent{color:var(--red)}
+  .accent{color:var(--green)}
   .note{font-size:12px;color:var(--muted);margin-top:8px}
 
   @media (max-width: 900px){
@@ -296,6 +304,14 @@
     .card{ width:100%; } /* en móvil, que use todo el ancho y scrollee */
     .table{ width:100%; } /* y que no se corte raro */
   }
+
+.line-soft{
+  opacity:.72;
+}
+
+.soft-money{
+  color:#6b7280;
+}
 </style>
 
 </head>
@@ -309,19 +325,29 @@
 
         <div>
           <h1>EL GALLO MÁS GALLO · Luquisa</h1>
-          <div class="sub">AppWeb para cálculo de cuota de ventas ·  v1.0.0</div>
+          <div class="sub">AppWeb para cálculo de cuota de ventas ·  v1.1.1</div>
         </div>
       </div>
 
       <div class="actions">
-        <div class="date">
-          <label for="reportDate">Fecha</label>
-          <input id="reportDate" type="date" />
-        </div>
-        <button class="btn primary" id="addRow">+ Agregar vendedor</button>
-        <button class="btn" id="reset">Reset</button>
-        
-      </div>
+  <div class="date">
+    <label for="reportDate">Fecha</label>
+    <input id="reportDate" type="date" />
+  </div>
+
+  <div class="date">
+    <label for="workDays">Días laborables</label>
+    <input id="workDays" type="number" min="1" step="1" value="26" style="width:70px" />
+  </div>
+
+  <div class="date">
+    <label for="currentDay">Día actual</label>
+    <input id="currentDay" type="number" min="1" step="1" value="1" style="width:70px" />
+  </div>
+
+  <button class="btn primary" id="addRow">+ Agregar vendedor</button>
+  <button class="btn" id="reset">Reset</button>
+</div>
     </div>
 
     <div class="card">
@@ -329,36 +355,50 @@
         <table class="table">
           <thead>
             <tr>
-              <th style="width:30px">#</th>
-             <th style="width:240px">Vendedor</th>
-              <th class="num" style="width:120px">Cuota</th>
-              <th class="num" style="width:120px">Venta</th>
-              <th class="num" style="width:80px">% Real</th>
-              <th style="width:140px">Progreso</th>
-              <th style="width:120px"></th>
-
-
-            </tr>
+  <th style="width:20px">#</th>
+  <th style="width:220px">Vendedor</th>
+  <th class="num" style="width:120px">Cuota</th>
+  <th class="num" style="width:120px">Venta</th>
+  <th class="num" style="width:120px">Debe llevar</th>
+  <th class="num" style="width:80px">% Real</th>
+  <th style="width:100px">Progreso</th>
+  <th style="width:42px"></th>
+</tr>
           </thead>
           <tbody id="rows"></tbody>
         </table>
       </div>
 
       <div class="footer">
-        <div class="tot">
-          <h3>TOTAL PANAMÁ</h3>
-          <div class="line"><div>Cuota</div><div class="money" id="totCuotaPanama">B/. 0.00</div></div>
-          <div class="line"><div>Venta</div><div class="money accent" id="totVentaPanama">B/. 0.00</div></div>
-          <div class="line"><div>% Real</div><div class="money" id="totPctPanama">0.00%</div></div>
-          <div class="note">Panamá: Juan Valdez, José Velázquez, Francisco Beitía, Máximo Gallardo, Héctor Vega, Luis Carlos, Antonio Marmolejo, Uvaldino Serracín.</div>
-        </div>
+
+       <div class="tot">
+  <h3>TOTAL PANAMÁ</h3>
+  <div class="line"><div>Cuota</div><div class="money" id="totCuotaPanama">B/. 0.00</div></div>
+  <div class="line"><div>Venta Alcanzada</div><div class="money accent" id="totVentaPanama">B/. 0.00</div></div>
+
+  <div class="line">
+    <div>Venta esperada</div>
+    <div class="money" id="totEsperadaPanama">B/. 0.00</div>
+  </div>
+
+  <div class="line"><div>% Real</div><div class="money" id="totPctPanama">0.00%</div></div>
+  <div class="line line-soft"><div>Venta faltante</div><div class="money soft-money" id="totFaltantePanama">B/. 0.00</div></div>
+  <div class="note">Panamá: Juan Valdez, José Velázquez, Francisco Beitía, Máximo Gallardo, Héctor Vega, Luis Carlos, Antonio Marmolejo, Uvaldino Serracín.</div>
+</div>
 
         <div class="tot">
           <h3>TOTAL CHITRÉ</h3>
           <div class="line"><div>Cuota</div><div class="money" id="totCuotaChitre">B/. 0.00</div></div>
-          <div class="line"><div>Venta</div><div class="money accent" id="totVentaChitre">B/. 0.00</div></div>
+          <div class="line"><div>Venta Alcanzada</div><div class="money accent" id="totVentaChitre">B/. 0.00</div></div>
+
+<div class="line">
+  <div>Venta esperada</div>
+  <div class="money" id="totEsperadaChitre">B/. 0.00</div>
+</div>
+
           <div class="line"><div>% Real</div><div class="money" id="totPctChitre">0.00%</div></div>
-          <div class="note">Chitré: Eduardo Domínguez, Abdiel Jované, Abraham Tello.</div>
+<div class="line line-soft"><div>Venta faltante</div><div class="money soft-money" id="totFaltanteChitre">B/. 0.00</div></div>
+<div class="note">Chitré: Eduardo Domínguez, Abdiel Jované, Abraham Tello.</div>
         </div>
       </div>
     </div>
@@ -436,23 +476,39 @@ function defaultRows(){
 }
 
 
+
 const rowsEl = $("#rows");
 const dateEl = $("#reportDate");
+const workDaysEl = $("#workDays");
+const currentDayEl = $("#currentDay");
 
 let state = loadState() || {
   date: new Date().toISOString().slice(0,10),
+  workDays: 26,
+  currentDay: 1,
   rows: defaultRows()
 };
 
 dateEl.value = state.date || new Date().toISOString().slice(0,10);
+workDaysEl.value = state.workDays || 26;
+currentDayEl.value = state.currentDay || 1;
+
+
+
 
 function render(){
   rowsEl.innerHTML = "";
 
   state.rows.forEach((r, idx) => {
-    const cuota = toNum(r.cuota);
-    const venta = toNum(r.venta);
-    const pct = cuota > 0 ? (venta / cuota) * 100 : 0;
+   const cuota = toNum(r.cuota);
+const venta = toNum(r.venta);
+const pct = cuota > 0 ? (venta / cuota) * 100 : 0;
+
+const workDays = Math.max(1, Number(state.workDays) || 26);
+const currentDay = Math.max(1, Number(state.currentDay) || 1);
+
+const metaDiaria = cuota / workDays;
+const deberiaHoy = metaDiaria * currentDay;
 
     const tag = groupTag(r.name);
     const topClass = (idx===0) ? "top1" : (idx===1) ? "top2" : (idx===2) ? "top3" : "";
@@ -479,13 +535,14 @@ function render(){
            value="${fmtInputNumber(cuota)}" placeholder="0.00" />
   </td>
 
-  <td class="num">
-    <input class="in num" data-k="venta" data-i="${idx}" inputmode="decimal"
-           value="${fmtInputNumber(venta)}" placeholder="0.00" />
-  </td>
+ <td class="num">
+  <input class="in num" data-k="venta" data-i="${idx}" inputmode="decimal"
+         value="${fmtInputNumber(venta)}" placeholder="0.00" />
+</td>
 
-  <td class="pct" data-role="pct">${fmtPct(pct)}</td>
+<td class="num money">${fmtMoney(deberiaHoy)}</td>
 
+<td class="pct" data-role="pct">${fmtPct(pct)}</td>
   <td>
     <div class="bar" data-role="bar" title="${fmtPct(pct)}">
       <div class="dot" data-role="dot" style="left:${clamp(pct,0,100)}%"></div>
@@ -495,7 +552,7 @@ function render(){
 
   <td>
     <div class="rowActions">
-      <button class="mini" data-act="del" data-i="${idx}">Eliminar</button>
+      <button class="mini" data-act="del" data-i="${idx}">🗑️</button>
     </div>
   </td>
 `;
@@ -517,22 +574,51 @@ function calcTotals(){
 
   const sum = (arr, k) => arr.reduce((a,x) => a + toNum(x[k]), 0);
 
-  const cP = sum(panama, "cuota");
-  const vP = sum(panama, "venta");
-  const pP = cP>0 ? (vP/cP)*100 : 0;
+ const cP = sum(panama, "cuota");
+const vP = sum(panama, "venta");
+const eP = panama.reduce((a, x) => {
+  const cuota = toNum(x.cuota);
+  const workDays = Math.max(1, Number(state.workDays) || 26);
+  const currentDay = Math.max(1, Number(state.currentDay) || 1);
+  return a + ((cuota / workDays) * currentDay);
+}, 0);
+const pP = cP>0 ? (vP/cP)*100 : 0;
+const fP = Math.max(0, cP - vP);
 
-  const cC = sum(chitre, "cuota");
-  const vC = sum(chitre, "venta");
-  const pC = cC>0 ? (vC/cC)*100 : 0;
+const cC = sum(chitre, "cuota");
+const vC = sum(chitre, "venta");
+
+const eC = chitre.reduce((a, x) => {
+  const cuota = toNum(x.cuota);
+  const workDays = Math.max(1, Number(state.workDays) || 26);
+  const currentDay = Math.max(1, Number(state.currentDay) || 1);
+  return a + ((cuota / workDays) * currentDay);
+}, 0);
+
+
+const pC = cC>0 ? (vC/cC)*100 : 0;
+const fC = Math.max(0, cC - vC);
+
+
 
   $("#totCuotaPanama").textContent = fmtMoney(cP);
   $("#totVentaPanama").textContent = fmtMoney(vP);
+$("#totEsperadaPanama").textContent = fmtMoney(eP);
+$("#totVentaPanama").style.color = vP >= eP ? "#1b8f3a" : "#e53935";
   $("#totPctPanama").textContent = fmtPct(pP);
 
   $("#totCuotaChitre").textContent = fmtMoney(cC);
   $("#totVentaChitre").textContent = fmtMoney(vC);
+$("#totEsperadaChitre").textContent = fmtMoney(eC);
+$("#totVentaChitre").style.color = vC >= eC ? "#1b8f3a" : "#e53935";
   $("#totPctChitre").textContent = fmtPct(pC);
+$("#totFaltantePanama").textContent = fmtMoney(fP);
+$("#totFaltanteChitre").textContent = fmtMoney(fC);
+
+
+
 }
+
 function rowPct(r){
   const cuota = toNum(r.cuota);
   const venta = toNum(r.venta);
@@ -576,12 +662,50 @@ function updateRowUI(tr, row){
   if(maskEl) maskEl.style.width = `${100 - clamp(pct,0,100)}%`;
 }
 
+
+
 /* ========= Events ========= */
 dateEl.addEventListener("input", () => {
   state.date = dateEl.value;
   saveState(state);
 });
+workDaysEl.addEventListener("input", () => {
+  state.workDays = Math.max(1, Number(workDaysEl.value) || 1);
 
+  if((Number(currentDayEl.value) || 1) > state.workDays){
+    state.currentDay = state.workDays;
+    currentDayEl.value = state.currentDay;
+  }
+
+  saveState(state);
+});
+
+workDaysEl.addEventListener("input", () => {
+  state.workDays = Math.max(1, Number(workDaysEl.value) || 1);
+
+  if((Number(currentDayEl.value) || 1) > state.workDays){
+    state.currentDay = state.workDays;
+    currentDayEl.value = state.currentDay;
+  }
+
+  render();
+});
+
+currentDayEl.addEventListener("input", () => {
+  const maxDays = Math.max(1, Number(workDaysEl.value) || 1);
+  state.currentDay = Math.min(maxDays, Math.max(1, Number(currentDayEl.value) || 1));
+  currentDayEl.value = state.currentDay;
+
+  render();
+});
+
+currentDayEl.addEventListener("input", () => {
+  const maxDays = Math.max(1, Number(workDaysEl.value) || 1);
+  state.currentDay = Math.min(maxDays, Math.max(1, Number(currentDayEl.value) || 1));
+  currentDayEl.value = state.currentDay;
+
+  saveState(state);
+});
 rowsEl.addEventListener("input", (e) => {
   const t = e.target;
   if(!t.matches("[data-k]")) return;
@@ -638,7 +762,13 @@ $("#addRow").addEventListener("click", () => {
 $("#reset").addEventListener("click", () => {
   state.rows = defaultRows();
   state.date = new Date().toISOString().slice(0,10);
+  state.workDays = 26;
+  state.currentDay = 1;
+
   dateEl.value = state.date;
+  workDaysEl.value = state.workDays;
+  currentDayEl.value = state.currentDay;
+
   render();
 });
 
